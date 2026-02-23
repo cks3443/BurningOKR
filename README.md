@@ -10,16 +10,19 @@ BurningOKR has been developed as a web application with an Angular Frontend and 
 
 ## Installation
 
-When you have Docker and Docker-Compose installed you can proceed with the next steps, otherwise please install Docker and Docker-Compose first.  
-You can use our docker-compose file for easy use and compatibility!
+When you have Docker and Docker Compose installed you can proceed with the next steps.
 
-1. Download the [docker-compose-prod.yml](/docker/docker-compose-prod.yml) file
-2. Download [backend.env.sample](/docker/backend.env.sample) file and **rename** it to backend.env
-3. Download [postgres.env.sample](/docker/postgres.env.sample) file and **rename** it to postgres.env
-4. Now fill in your configurations in the two downloaded .env-files
-5. Hint: When you don't want to use Azure or a SMTP-Mailserver just comment these parts in the .env-files out and they won't be used. For more information read the [development docs](/docs/development.md).
-6. After that you are good to go and you can run `docker compose -f docker-compose-prod.yml up` in the directory where the previously downloaded files are saved.
-   Hint: When you want to reuse the console window add a `-d` to the compose command to run in detached mode.
+1. Open the `docker` directory.
+2. Copy [backend.env.sample](/docker/backend.env.sample) to `backend.env`.
+3. Copy [postgres.env.sample](/docker/postgres.env.sample) to `postgres.env`.
+4. Edit both files and set secure production values.
+5. Start the stack with `docker compose up -d --build`.
+6. Open `http://localhost` in your browser.
+
+Notes:
+- `SYSTEM_CONFIGURATION_PROVIDER` in `backend.env` must match your identity provider (`keycloak` or `azureAD`).
+- `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI` and `SYSTEM_CONFIGURATION_ISSUER_URI` must point to the same issuer realm/tenant.
+- If you do not use SMTP, keep the `SPRING_MAIL_*` lines commented.
 
 ## Development
 
