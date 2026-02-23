@@ -14,14 +14,18 @@ export class AuthGuard implements CanActivate {
 
   async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> {
 
-    if(this.authService.isInitialized() || await this.authService.waitForInitializationToFinish()) {
-      const access: string | boolean = await this.authService.login(state.url);
+    const authenticationServiceInitialized: boolean = this.authService.isInitialized() || await this.authService.waitForInitializationToFinish();
 
-      if (typeof access === 'string') {
-        return this.router.parseUrl(access);
-      } else {
-        return access;
-      }
+    if (!authenticationServiceInitialized) {
+      return false;
+    }
+
+    const access: string | boolean = await this.authService.login(state.url);
+
+    if (typeof access === 'string') {
+      return this.router.parseUrl(access);
+    } else {
+      return access;
     }
 
   }

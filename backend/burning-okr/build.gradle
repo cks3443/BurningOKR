@@ -28,7 +28,6 @@ subprojects {
     }
 
     dependencies {
-        implementation deps.spring.framework.springContext
         testImplementation deps.spring.boot.starter.test
     }
 

@@ -21,12 +21,17 @@ export class AuthenticationService {
     private oidcConfigurationService: OidcConfigurationService,
     ) {
     this.isUserLoggedIn$.next(false); // user is not logged in on application start by default
-    this.finishedInitialisation = new Promise<boolean>(resolve => {
-      this.configure().then(() => {
+    this.finishedInitialisation = this.configure()
+      .then(() => {
         this.initialized = true;
-        resolve(true);
+        return true;
+      })
+      .catch((error: Error) => {
+        this.initialized = false;
+        console.error('Failed to initialize authentication service.', error);
+
+        return false;
       });
-    });
   }
 
   async configure(): Promise<void> {
@@ -39,6 +44,8 @@ export class AuthenticationService {
   }
 
   getAuthFlowConfig(oidcConfig: OidcConfiguration): AuthFlowConfig {
+    const requireHttps: boolean = !oidcConfig.issuerUri.startsWith('http://');
+
     return {
       issuer: oidcConfig.issuerUri,
       redirectUri: `${window.location.origin}`,
@@ -46,6 +53,7 @@ export class AuthenticationService {
       responseType: 'code',
       scope: oidcConfig.scopes.join(' '),
       showDebugInformation: true, // TODO remove after azure ad is working
+      requireHttps,
       strictDiscoveryDocumentValidation: oidcConfig.strictDiscoveryDocumentValidation,
     } as AuthFlowConfig;
   }
